@@ -83,6 +83,7 @@ enum class PathAcceptingKeyword {
     NOT_IN,
     OPTIONS,
     REGEX,
+    SIMILARTO,
     SIZE,
     TYPE,
     WITHIN,

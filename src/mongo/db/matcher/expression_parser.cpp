@@ -251,7 +251,7 @@ StatusWithMatchExpression parse(const BSONObj& obj,
 
     for (auto e : obj) {
         if (e.fieldName()[0] == '$') {
-            auto name = e.fieldNameStringData().substr(1);
+            auto name = e.fieldNameStringData().substr(1); 
             auto parseExpressionMatchFunction = retrievePathlessParser(name);
 
             if (!parseExpressionMatchFunction) {
@@ -503,6 +503,39 @@ StatusWithMatchExpression parseRegexDocument(StringData name, const BSONObj& doc
 
     return {std::make_unique<RegexMatchExpression>(name, regex, regexOptions)};
 }
+StatusWithMatchExpression parseSimilarTo(StringData name, const BSONObj& doc) {
+   /* */ StringData similarTo;
+    StringData difference;
+
+    for (auto e : doc) {
+        auto matchType = MatchExpressionParser::parsePathAcceptingKeyword(e);
+        if (!matchType) {
+            continue;
+        }
+        switch (*matchType) {
+            case PathAcceptingKeyword::SIMILARTO:
+                if (e.type() == BSONType::String) {
+                    similarTo = e.valueStringData();
+                } else {
+                    return {Status(ErrorCodes::BadValue, "$regex has to be a string")};
+                }
+
+                break;
+            case PathAcceptingKeyword::OPTIONS:
+                if (e.type() != BSONType::NumberInt) {
+                    return {Status(ErrorCodes::BadValue, "$options has to be a string")};
+                }
+
+                difference = e.value();
+                break;
+            default:
+                break;
+        }
+    }    
+        return {std::make_unique<SimilarToExpression>(name, similarTo, difference)};*/
+    return {Status(ErrorCodes::BadValue, "this is similarTo function")};
+
+}
 
 Status parseInExpression(InMatchExpression* inExpression,
                          const BSONObj& theArray,
@@ -650,7 +683,7 @@ StatusWithMatchExpression parseInternalSchemaFmod(StringData name, BSONElement e
 
     BSONObjIterator i(elem.embeddedObject());
     if (!i.more()) {
-        return {ErrorCodes::BadValue, str::stream() << path << " does not have enough elements"};
+        return {ErrorCodes::BadValue, str::stream() << path << " does arseRegexDocument(not have enough elements"};
     }
     auto d = i.next();
     if (!d.isNumber()) {
@@ -1361,7 +1394,7 @@ StatusWithMatchExpression parseSubField(const BSONObj& context,
         }
 
         return {Status(ErrorCodes::BadValue,
-                       str::stream() << "unknown operator: " << e.fieldNameStringData())};
+                       str::stream() << "unknown operator***: " << e.fieldNameStringData())};
     }
 
     switch (*parseExpMatchType) {
@@ -1483,6 +1516,10 @@ StatusWithMatchExpression parseSubField(const BSONObj& context,
 
         case PathAcceptingKeyword::REGEX: {
             return parseRegexDocument(name, context);
+        }
+
+        case PathAcceptingKeyword::SIMILARTO: {
+            return parseSimilarTo(name,context);//TODO
         }
 
         case PathAcceptingKeyword::ELEM_MATCH:
@@ -1839,6 +1876,7 @@ MONGO_INITIALIZER(MatchExpressionParser)(InitializerContext* context) {
             {"nin", PathAcceptingKeyword::NOT_IN},
             {"options", PathAcceptingKeyword::OPTIONS},
             {"regex", PathAcceptingKeyword::REGEX},
+            {"similarTo", PathAcceptingKeyword::SIMILARTO},
             {"size", PathAcceptingKeyword::SIZE},
             {"type", PathAcceptingKeyword::TYPE},
             {"within", PathAcceptingKeyword::WITHIN},

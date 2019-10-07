@@ -205,6 +205,7 @@ Document redactSafePortionDollarOps(BSONObj expr) {
             // These are always ok
             case PathAcceptingKeyword::TYPE:
             case PathAcceptingKeyword::REGEX:
+            case PathAcceptingKeyword::SIMILARTO:
             case PathAcceptingKeyword::OPTIONS:
             case PathAcceptingKeyword::MOD:
             case PathAcceptingKeyword::BITS_ALL_SET:

@@ -2605,7 +2605,7 @@ public:
      * The method will return a positive number if there is a match and '-1' if there is no match.
      * Throws 'uassert()' for any errors.
      */
-    int execute(RegexExecutionState* executionState) const;
+    int execute(RegexExecutionState* executionState) const; 
 
     /**
      * Finds the next possible match for the given input and pattern that are part of

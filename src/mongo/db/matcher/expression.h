@@ -76,6 +76,7 @@ public:
         GT,
         GTE,
         REGEX,
+        SIMILARTO,
         MOD,
         EXISTS,
         MATCH_IN,

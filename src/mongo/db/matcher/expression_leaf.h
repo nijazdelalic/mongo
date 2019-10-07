@@ -337,6 +337,55 @@ private:
     std::string _flags;
     std::unique_ptr<pcrecpp::RE> _re;
 };
+/* 
+class SimilarToExpression : public LeafMatchExpression {
+public:
+    static const std::set<char> kValidRegexFlags;
+
+    SimilarToExpression(StringData path, const BSONElement& e);
+    SimilarToExpression(StringData path, StringData regex, StringData options);
+
+    ~SimilarToExpression();
+
+    virtual std::unique_ptr<MatchExpression> shallowClone() const {
+        std::unique_ptr<RegexMatchExpression> e =
+            std::make_unique<RegexMatchExpression>(path(), _regex, _flags);
+        if (getTag()) {
+            e->setTag(getTag()->clone());
+        }
+        return std::move(e);
+    }
+
+    bool matchesSingleElement(const BSONElement&, MatchDetails* details = nullptr) const final;
+
+    virtual void debugString(StringBuilder& debug, int indentationLevel) const;
+
+    BSONObj getSerializedRightHandSide() const final;
+
+    void serializeToBSONTypeRegex(BSONObjBuilder* out) const;
+
+    void shortDebugString(StringBuilder& debug) const;
+
+    virtual bool equivalent(const MatchExpression* other) const;
+
+    const std::string& getString() const {
+        return _regex;
+    }
+    const std::string& getFlags() const {
+        return _flags;
+    }
+
+private:
+    ExpressionOptimizerFunc getOptimizer() const final {
+        return [](std::unique_ptr<MatchExpression> expression) { return expression; };
+    }
+
+    void _init();
+
+    std::string _regex;
+    std::string _flags;
+    std::unique_ptr<pcrecpp::RE> _re;
+};*/
 
 class ModMatchExpression : public LeafMatchExpression {
 public:
